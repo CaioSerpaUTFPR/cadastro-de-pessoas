@@ -1,5 +1,5 @@
 const express = require('express');
-const {Client} = require('pg');
+const { Client } = require('pg');
 const db_config = require('../db_config');
 const cors = require('cors');
 
@@ -9,36 +9,40 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.listen(3003, async()=>{
+app.listen(3003, async () => {
     await db.connect();
     console.log('Server Online');
 });
 
-app.get('/',async (req,res)=>{
-    try{   
+app.get('/', async (req, res) => {
+    try {
         let data;
         data = await db.query(`
                                 SELECT 
-                                    * 
+                                    pk_person
+                                    ,person_name
+                                    ,fn_decrypt_pass(encrypt_pass) as encrypt_pass 
+                                    ,person_login
+                                    ,person_type
+                                    ,cpf_cnpj
+                                    ,rg_stateinsc
+                                    ,tel 
                                 FROM
-                                    person
-                                    LEFT JOIN person_tel on person_tel.fk_person = person.pk_person`);
-        console.log(data);
+                                    person`);
         return res.json(data.rows);
     }
-    catch(e){
+    catch (e) {
         res.status(500).json(e.message);
     }
 })
 
-app.get('/:id',async (req,res)=>{
-    try{
+app.get('/:id', async (req, res) => {
+    try {
         let data;
-        data = await db.query("SELECT * FROM person WHERE pk_person = $1",[req.params.id]);
-        console.log(data);
+        data = await db.query("SELECT * FROM person WHERE pk_person = $1", [req.params.id]);
         return res.json(data.rows);
     }
-    catch(e){
+    catch (e) {
         res.status(500).json(e.message);
     }
 })
@@ -57,41 +61,38 @@ app.get('/:id',async (req,res)=>{
 //     }
 // })
 
-app.post('/', async (req,res)=>{
-    try{
-        const {person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc} = req.body;
+app.post('/', async (req, res) => {
+    try {
+        const { person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, tel } = req.body;
         let data;
-        data = await db.query('INSERT INTO person(person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc) VALUES ($1, $2, $3, $4, $5, $6);',[person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc])
+        data = await db.query('INSERT INTO person(person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, tel) VALUES ($1, $2, $3, $4, $5, $6, $7);', [person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, tel])
         return res.json(data.rows);
     }
-    catch(e){
-        console.log('ooooooooooooooooooo');
-        return res.status(500).json({ message: 'Amanah felizmente tem jogo do corinthians' });
+    catch (e) {
+        return res.status(500).json({ message: e });
     }
 })
 
-app.put('/:id', async (req,res)=>{
-    try{
+app.put('/:id', async (req, res) => {
+    try {
         const id = req.params.id;
-        const {person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc} = req.body;
+        const { person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc } = req.body;
         let data;
-        data = await db.query('UPDATE person SET person_name = $1, encrypt_pass = $2, person_login = $3, person_type = $4, cpf_cnpj = $5, rg_stateinsc = $6 WHERE pk_person = $7;',[person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, id])
-        console.log(data);
+        data = await db.query('UPDATE person SET person_name = $1, encrypt_pass = $2, person_login = $3, person_type = $4, cpf_cnpj = $5, rg_stateinsc = $6 WHERE pk_person = $7;', [person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, id])
         return res.json(data.rows);
     }
-    catch(e){
+    catch (e) {
         res.status(500).json(e.message);
     }
 })
 
-app.delete('/:id',async (req,res)=>{
-    try{
+app.delete('/:id', async (req, res) => {
+    try {
         let data;
-        data = await db.query("DELETE FROM person WHERE pk_person = $1",[req.params.id]);
-        console.log(data);
+        data = await db.query("DELETE FROM person WHERE pk_person = $1", [req.params.id]);
         return res.json(data.rows);
     }
-    catch(e){
+    catch (e) {
         res.status(500).json(e.message);
     }
 })

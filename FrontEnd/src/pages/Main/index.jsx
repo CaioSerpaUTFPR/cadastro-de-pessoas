@@ -4,12 +4,22 @@ import { CustomButton } from '../../components/Button';
 import { Form } from '../../components/Form';
 import { Modal } from '../../components/Modal';
 
+
+export const API = axios.create({ baseURL: 'http://localhost:3003' });
+
 function Main() {
 
 
-  const API = axios.create({ baseURL: 'http://localhost:3003' });
+
   const [data, setData] = useState([]);
   const [newPersonModal, setNewPersonModal] = useState(false);
+
+  const handleInsertByForm = (person_inserted) => {
+    setNewPersonModal(false);
+    //setData([...data, person_inserted]);
+    fetchData();
+  }
+
 
   async function fetchData() {
     let response;
@@ -21,33 +31,13 @@ function Main() {
       console.log(e);
     }
   }
-  /*TODO YUP REact-hook-form*/
-  async function handleCreatePerson() {
-    try {
-      await API.post('/', {
-        person_name: "Joao Marcos teste Post"
-        , encrypt_pass: "abacaxi"
-        , person_login: "juandrade"
-        , person_type: "fisica"
-        , cpf_cnpj: "dsassdddas"
-        , rg_stateinsc: "aasdsasd"
-      });
-      //setData(response.data);
-    }
-    catch (e) {
-      console.log(e);
-    }
-  }
-
 
   async function handleDeletePerson(pk_person) {
-    console.log(pk_person + 'aqui');
     try {
       await API.delete(`/${pk_person}`);
       const newData = data.filter((person) => {
         return (person.pk_person !== pk_person);
       })
-      console.log(newData);
       setData(newData);
     }
     catch (e) {
@@ -55,13 +45,14 @@ function Main() {
     }
   }
 
-  async function handleUpdatePerson() {
-
+  async function handleUpdatePerson(person) {
+    console.log(person);
   }
+
+
   useEffect(() => { fetchData() }, []);
 
-
-
+  useEffect(() => { }, []);
 
   return (
     <>
@@ -74,11 +65,11 @@ function Main() {
         </div>
       } */}
       {newPersonModal && <Modal open={newPersonModal} setOpen={setNewPersonModal}>
-        <Form />
+        <Form handleInsertByForm={handleInsertByForm} />
       </Modal>}
       <div style={{ backgroundColor: 'red', width: '100%', height: '40px', display: 'flex', alignItems: 'center' }}>
         <div style={{ marginLeft: '10px', witdh: '50%', height: '50%' }}>
-          <CustomButton onClick={() => { setNewPersonModal(true); handleCreatePerson() }}>Novo</CustomButton>
+          <CustomButton onClick={() => { setNewPersonModal(true) }}>Novo</CustomButton>
         </div>
       </div>
       <div style={{ backgroundColor: 'yellow', width: '100%', height: '400px', display: 'flex' }}>
@@ -87,22 +78,31 @@ function Main() {
             <tr>
               <th>Cod Pessoa</th>
               <th>Nome</th>
+              <th>CPF/CNPJ</th>
+              <th>RG/INSC ESTADUAL</th>
               <th>Login</th>
               <th>Senha</th>
               <th>Telefone</th>
+              <th>Opções</th>
             </tr>
           </thead>
           <tbody>
             {data.map((person) => {
               return (
-                <tr key={person.pk_person}>
+                <tr key={person.rg_stateinsc}>
                   <td>{person.pk_person}</td>
                   <td>{person.person_name}</td>
+                  <td>{person.cpf_cnpj}</td>
+                  <td>{person.rg_stateinsc}</td>
                   <td>{person.person_login}</td>
                   <td>{person.encrypt_pass}</td>
+                  <td>{person.tel}</td>
                   <td>
-                    <CustomButton onClick={() => { handleDeletePerson(person.pk_person) }}>Excluir</CustomButton>
-                    <CustomButton onClick={() => { handleDeletePerson(person.pk_person) }}>Editar</CustomButton></td>
+                    <div style={{ display: 'flex' }}>
+                      <CustomButton onClick={() => { handleDeletePerson(person.pk_person) }}>Excluir</CustomButton>
+                      <CustomButton onClick={() => { handleUpdatePerson(person) }}>Editar</CustomButton>
+                    </div>
+                  </td>
                 </tr>
               )
             })}
