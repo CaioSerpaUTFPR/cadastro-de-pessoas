@@ -3,18 +3,21 @@ import { useEffect, useState } from 'react';
 import { CustomButton } from '../../components/Button';
 import { Form } from '../../components/Form';
 import { Modal } from '../../components/Modal';
+import Alert from '@mui/material/Alert';
+
 
 
 export const API = axios.create({ baseURL: 'http://localhost:3003' });
 
 function Main() {
 
-
-
   const [data, setData] = useState([]);
   const [updateData, setUpdateData] = useState([]);
   const [newPersonModal, setNewPersonModal] = useState(false);
   const [updatePersonModal, setupdatePersonModal] = useState(false);
+  const [hasUpdateError, setHasUpdateError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [deletePerson, setDeletePerson] = useState('');
 
   const handleInsertByForm = () => {
     afterForm();
@@ -24,12 +27,25 @@ function Main() {
     afterForm();
   }
 
-  function afterForm() {
-    setNewPersonModal(false);
-    setupdatePersonModal(false);
-    fetchData();
+  async function handleResposeError(err) {
+    afterForm(err);
   }
 
+  function handleError(err) {
+    setHasUpdateError(true);
+    setErrorMessage(err);
+    setTimeout(() => {
+      setHasUpdateError(false);
+      setErrorMessage('');
+    }, 3000);
+  }
+
+  function afterForm(err) {
+    setNewPersonModal(false);
+    setupdatePersonModal(false);
+    err && handleError(err);
+    fetchData();
+  }
 
   async function fetchData() {
     let response;
@@ -62,19 +78,13 @@ function Main() {
 
   return (
     <>
-      {/* {
-        newPersonModal && <div style={{ backgroundColor: '#e2e2e2', opacity: '0.5', width: '100%', height: '100%', position: 'absolute', display: 'flex' }}>
-          <div style={{ zIndex: '1', backgroundColor: 'green', opacity: '0 !important', width: '80%', height: '80%', margin: 'auto' }}>
-            <button onClick={() => { setNewPersonModal(false) }}></button>
-          </div>
-
-        </div>
-      } */}
+      {hasUpdateError && <Alert severity="error">{errorMessage}</Alert>}
       {newPersonModal && <Modal open={newPersonModal} setOpen={setNewPersonModal}>
-        <Form handleInsertByForm={handleInsertByForm} />
+        <Form handleInsertByForm={handleInsertByForm} handleResposeError={handleResposeError} />
       </Modal>}
+
       {updatePersonModal && <Modal open={updatePersonModal} setOpen={setupdatePersonModal}>
-        <Form handleUpdateByForm={handleUpdateByForm} editPerson={updateData} />
+        <Form handleUpdateByForm={handleUpdateByForm} editPerson={updateData} handleResposeError={handleResposeError} />
       </Modal>}
       <div style={{ backgroundColor: 'red', width: '100%', height: '40px', display: 'flex', alignItems: 'center' }}>
         <div style={{ marginLeft: '10px', witdh: '50%', height: '50%' }}>

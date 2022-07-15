@@ -28,7 +28,9 @@ app.get('/', async (req, res) => {
                                     ,rg_stateinsc
                                     ,tel 
                                 FROM
-                                    person`);
+                                    person
+                                ORDER BY
+                                    person.person_name`);
         return res.json(data.rows);
     }
     catch (e) {
@@ -39,7 +41,7 @@ app.get('/', async (req, res) => {
 app.get('/:id', async (req, res) => {
     try {
         let data;
-        data = await db.query("SELECT * FROM person WHERE pk_person = $1", [req.params.id]);
+        data = await db.query("SELECT * FROM person WHERE pk_person = $1 ", [req.params.id]);
         return res.json(data.rows);
     }
     catch (e) {
@@ -69,7 +71,7 @@ app.post('/', async (req, res) => {
         return res.json(data.rows);
     }
     catch (e) {
-        return res.status(500).json({ message: e });
+        return res.status(500).json(e.message);
     }
 })
 

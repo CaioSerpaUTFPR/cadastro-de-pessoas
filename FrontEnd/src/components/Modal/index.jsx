@@ -9,15 +9,8 @@ export const Modal = ({ open, setOpen, children }) => {
     setOpen(false);
   };
   return (
-    // <Div>
-    //   {/* <div style={{ zIndex: '1', backgroundColor: 'green', opacity: '0 !important', width: '80%', height: '80%', margin: 'auto' }}>
-    //     <button onClick={() => { setNewPersonModal(false) }}></button>
-    //   </div> */}
-    //   <Conteiner></Conteiner>
-    // </Div>
     <Dialog maxWidth={false} onClose={handleClose} open={open}>
       {children}
-      {/* <div style={{ width: '900px', height: '800px' }}></div> */}
     </Dialog>
   )
 }

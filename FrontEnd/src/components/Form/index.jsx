@@ -15,7 +15,7 @@ const schema = yup.object({
 }).required();
 
 
-export const Form = ({ handleInsertByForm, handleUpdateByForm, editPerson }) => {
+export const Form = ({ handleInsertByForm, handleUpdateByForm, editPerson, handleResposeError }) => {
 
     const [radioNaturalChecked, setRadioNaturalChecked] = useState(true);
     const [radioLegalChecked, setRadioLegalChecked] = useState(false);
@@ -44,7 +44,7 @@ export const Form = ({ handleInsertByForm, handleUpdateByForm, editPerson }) => 
             });
         }
         catch (e) {
-            console.log(e);
+            handleResposeError(e.response.data);
         }
     }
 
@@ -63,7 +63,7 @@ export const Form = ({ handleInsertByForm, handleUpdateByForm, editPerson }) => 
             });
         }
         catch (e) {
-            console.log(e);
+            handleResposeError(e.response.data);
         }
     }
     function radioToogle() {

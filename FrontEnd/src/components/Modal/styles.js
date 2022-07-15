@@ -14,7 +14,5 @@ export const Div = styled.div`
 export const Conteiner = styled.div`
     height: 200px;
     width: 200px ;
-    background-color: red ;
-    opacity:1 !important;
-    
+    background-color: red ;    
 `;
