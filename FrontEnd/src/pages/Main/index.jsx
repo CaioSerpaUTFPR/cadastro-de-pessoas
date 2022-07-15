@@ -12,11 +12,21 @@ function Main() {
 
 
   const [data, setData] = useState([]);
+  const [updateData, setUpdateData] = useState([]);
   const [newPersonModal, setNewPersonModal] = useState(false);
+  const [updatePersonModal, setupdatePersonModal] = useState(false);
 
-  const handleInsertByForm = (person_inserted) => {
+  const handleInsertByForm = () => {
+    afterForm();
+  }
+
+  const handleUpdateByForm = () => {
+    afterForm();
+  }
+
+  function afterForm() {
     setNewPersonModal(false);
-    //setData([...data, person_inserted]);
+    setupdatePersonModal(false);
     fetchData();
   }
 
@@ -45,10 +55,6 @@ function Main() {
     }
   }
 
-  async function handleUpdatePerson(person) {
-    console.log(person);
-  }
-
 
   useEffect(() => { fetchData() }, []);
 
@@ -67,6 +73,9 @@ function Main() {
       {newPersonModal && <Modal open={newPersonModal} setOpen={setNewPersonModal}>
         <Form handleInsertByForm={handleInsertByForm} />
       </Modal>}
+      {updatePersonModal && <Modal open={updatePersonModal} setOpen={setupdatePersonModal}>
+        <Form handleUpdateByForm={handleUpdateByForm} editPerson={updateData} />
+      </Modal>}
       <div style={{ backgroundColor: 'red', width: '100%', height: '40px', display: 'flex', alignItems: 'center' }}>
         <div style={{ marginLeft: '10px', witdh: '50%', height: '50%' }}>
           <CustomButton onClick={() => { setNewPersonModal(true) }}>Novo</CustomButton>
@@ -77,6 +86,7 @@ function Main() {
           <thead style={{ height: '10%' }}>
             <tr>
               <th>Cod Pessoa</th>
+              <th>Tipo</th>
               <th>Nome</th>
               <th>CPF/CNPJ</th>
               <th>RG/INSC ESTADUAL</th>
@@ -88,9 +98,11 @@ function Main() {
           </thead>
           <tbody>
             {data.map((person) => {
+              const type = person.person_type[0].toUpperCase() + person.person_type.substring(1);
               return (
                 <tr key={person.rg_stateinsc}>
                   <td>{person.pk_person}</td>
+                  <td>{type}</td>
                   <td>{person.person_name}</td>
                   <td>{person.cpf_cnpj}</td>
                   <td>{person.rg_stateinsc}</td>
@@ -100,7 +112,7 @@ function Main() {
                   <td>
                     <div style={{ display: 'flex' }}>
                       <CustomButton onClick={() => { handleDeletePerson(person.pk_person) }}>Excluir</CustomButton>
-                      <CustomButton onClick={() => { handleUpdatePerson(person) }}>Editar</CustomButton>
+                      <CustomButton onClick={() => { setupdatePersonModal(true); setUpdateData(person) }}>Editar</CustomButton>
                     </div>
                   </td>
                 </tr>

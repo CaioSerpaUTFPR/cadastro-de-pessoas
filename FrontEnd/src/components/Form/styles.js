@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 export const Input = styled.input`
-    
+    :focus{
+        outline:${(props) => props.readOnly ? 'none' : 'default'}    
+    }
+    color:${(props) => props.readOnly ? 'gray' : 'default'}
 `;
 
 export const Span = styled.span`

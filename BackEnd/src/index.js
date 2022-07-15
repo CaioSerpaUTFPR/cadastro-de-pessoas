@@ -76,9 +76,9 @@ app.post('/', async (req, res) => {
 app.put('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const { person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc } = req.body;
+        const { person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, tel } = req.body;
         let data;
-        data = await db.query('UPDATE person SET person_name = $1, encrypt_pass = $2, person_login = $3, person_type = $4, cpf_cnpj = $5, rg_stateinsc = $6 WHERE pk_person = $7;', [person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, id])
+        data = await db.query('UPDATE person SET person_name = $1, encrypt_pass = $2, person_login = $3, person_type = $4, cpf_cnpj = $5, rg_stateinsc = $6, tel = $7 WHERE pk_person = $8;', [person_name, encrypt_pass, person_login, person_type, cpf_cnpj, rg_stateinsc, tel, id])
         return res.json(data.rows);
     }
     catch (e) {
