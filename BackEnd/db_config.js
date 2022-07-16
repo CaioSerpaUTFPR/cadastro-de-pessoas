@@ -1,4 +1,4 @@
-const db_config  = {
+const db_config = {
   user: 'postgres',
   host: '127.0.0.1',
   database: 'Atividade',
